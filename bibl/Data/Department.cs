@@ -12,7 +12,7 @@ namespace bibl.Data
     
     
         [Table("Departments")] // Соответствует вашей таблице в БД
-        public class Departments
+        public class Department
         {
             [Key]
             public int ID { get; set; }

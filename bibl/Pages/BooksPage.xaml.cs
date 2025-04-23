@@ -78,22 +78,24 @@ namespace bibl.Pages
                 .Include(b => b.Departments)
                 .AsQueryable();
 
-            // Фильтр по поисковому запросу
+            // Фильтр по поиску
             if (!string.IsNullOrEmpty(SearchTextBox.Text))
             {
                 string searchText = SearchTextBox.Text.ToLower();
                 query = query.Where(b =>
-                    (b.Title != null && b.Title.ToLower().Contains(searchText)) ||
+                    b.Title.ToLower().Contains(searchText) ||
                     (b.Author != null && b.Author.ToLower().Contains(searchText)));
             }
 
             // Фильтр по отделу
-            if (DepartmentFilter.SelectedItem is Data.Departments selectedDepartment)
+            if (DepartmentFilter.SelectedItem != null)
             {
-                query = query.Where(b => b.DepartmentID == selectedDepartment.ID);
+                int selectedId = (int)DepartmentFilter.SelectedValue;
+                query = query.Where(b => b.DepartmentID == selectedId);
             }
 
             BooksGrid.ItemsSource = query.ToList();
         }
+        
     }
 }

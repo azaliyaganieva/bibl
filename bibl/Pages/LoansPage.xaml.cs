@@ -29,13 +29,21 @@ namespace bibl.Pages
         }
         private void LoadLoans()
         {
-            var loans = DBcon.library.BookVidacha
-                .Include(l => l.Books)
-                .Include(l => l.Abonement)
-                .Include(l => l.Abonement.Readers)
-                .ToList();
+            try
+            {
+                var loans = DBcon.library.BookVidacha
+                    .Include(l => l.Books)
+                    .Include(l => l.Abonement)
+                    .Include(l => l.Abonement.Readers)
+                    .Include(l => l.Employees)
+                    .ToList();
 
-            LoansGrid.ItemsSource = loans;
+                LoansGrid.ItemsSource = loans;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки выдач: {ex.Message}");
+            }
         }
     }
 }
