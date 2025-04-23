@@ -15,11 +15,9 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using bibl.Data;
 using System.Data.Entity;
+using System.Globalization;
 namespace bibl.Pages
 {
-    /// <summary>
-    /// Логика взаимодействия для LoansPage.xaml
-    /// </summary>
     public partial class LoansPage : Page
     {
         public LoansPage()
@@ -27,22 +25,55 @@ namespace bibl.Pages
             InitializeComponent();
             LoadLoans();
         }
+
         private void LoadLoans()
         {
             try
             {
+                // Загружаем данные с учетом связей
                 var loans = DBcon.library.BookVidacha
                     .Include(l => l.Books)
+                    .Include(l => l.Books.Departments)  // Подгружаем отдел книги
                     .Include(l => l.Abonement)
                     .Include(l => l.Abonement.Readers)
-                    .Include(l => l.Employees)
                     .ToList();
 
                 LoansGrid.ItemsSource = loans;
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка загрузки выдач: {ex.Message}");
+                MessageBox.Show($"Ошибка загрузки: {ex.Message}");
+            }
+        }
+
+        // Обработчик кнопки "Вернуть"
+        private void ReturnButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (((Button)sender).Tag is int loanId)
+            {
+                try
+                {
+                    var loan = DBcon.library.BookVidacha.Find(loanId);
+                    if (loan != null)
+                    {
+                        // Если книга еще не возвращена
+                        if (loan.ReturnDate == null)
+                        {
+                            loan.ReturnDate = DateTime.Today;  // Ставим текущую дату
+                            DBcon.library.SaveChanges();
+                            LoadLoans();  // Обновляем таблицу
+                            MessageBox.Show("Книга возвращена!");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Эта книга уже возвращена!");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка: {ex.Message}");
+                }
             }
         }
     }

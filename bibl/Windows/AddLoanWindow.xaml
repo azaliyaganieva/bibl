@@ -25,7 +25,9 @@
                   DisplayMemberPath="FullName" SelectedValuePath="ID"/>
 
         <TextBlock Text="Дата выдачи:" Grid.Row="4"/>
-        <DatePicker x:Name="IssueDatePicker" Grid.Row="5" Margin="0 0 0 20"/>
+        <DatePicker x:Name="IssueDatePicker" Grid.Row="4" Margin="0,22,0,252"/>
+        <TextBlock Text="Дата возврата:" Grid.Row="4" Margin="0,127,0,103"/>
+        <DatePicker x:Name="ReturnDatePicker" Grid.Row="4" Margin="0,145,0,105"/>
 
         <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Сохранить" Click="SaveButton_Click" Width="100" Margin="0 0 10 0"/>

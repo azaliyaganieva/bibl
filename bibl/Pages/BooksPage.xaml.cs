@@ -31,7 +31,7 @@ namespace bibl.Pages
         private void LoadBooks()
         {
             BooksGrid.ItemsSource = DBcon.library.Books
-                .Include(b => b.Departments)
+                .Include(b => b.Departments) 
                 .ToList();
         }
 

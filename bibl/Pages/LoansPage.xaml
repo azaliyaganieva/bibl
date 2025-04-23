@@ -11,10 +11,22 @@
     <Grid>
         <DataGrid x:Name="LoansGrid" Margin="10" AutoGenerateColumns="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Книга" Binding="{Binding Book.Title}" Width="*"/>
-                <DataGridTextColumn Header="Читатель" Binding="{Binding Abonement.Reader.FullName}" Width="*"/>
-                <DataGridTextColumn Header="Дата выдачи" Binding="{Binding LoanDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="150"/>
-                <DataGridTextColumn Header="Дата возврата" Binding="{Binding ReturnDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="150"/>
+                <DataGridTextColumn Header="Книга" Binding="{Binding Books.Title}" Width="*"/>
+                <DataGridTextColumn Header="Автор" Binding="{Binding Books.Author}" Width="*"/>
+                <DataGridTextColumn Header="Читатель" Binding="{Binding Abonement.Readers.FullName}" Width="*"/>
+                <DataGridTextColumn Header="Дата выдачи" Binding="{Binding LoanDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="120"/>
+
+                <!-- Кнопка возврата -->
+                <DataGridTemplateColumn Header="Действие" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Вернуть" 
+                                    Click="ReturnButton_Click"
+                                    Tag="{Binding ID}"
+                                    Margin="2" Padding="5"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

@@ -51,17 +51,23 @@ namespace bibl.Windows
                 return;
             }
 
+            if (ReturnDatePicker.SelectedDate == null || ReturnDatePicker.SelectedDate < IssueDatePicker.SelectedDate)
+            {
+                MessageBox.Show("Дата возврата должна быть позже даты выдачи");
+                return;
+            }
+
             var loan = new BookVidacha
             {
                 BookID = (int)BooksComboBox.SelectedValue,
                 SubscriptionID = ((Readers)ReadersComboBox.SelectedItem).ID,
                 LoanDate = IssueDatePicker.SelectedDate.Value,
-                EmployeeID = 1 // ID текущего сотрудника
+                ReturnDate = ReturnDatePicker.SelectedDate.Value, // Добавляем дату возврата
+                EmployeeID = 1
             };
 
             DBcon.library.BookVidacha.Add(loan);
             DBcon.library.SaveChanges();
-
             DialogResult = true;
             Close();
         }
