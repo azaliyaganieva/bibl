@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bibl.Windows;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -62,8 +63,13 @@ namespace bibl.Pages
 
         private void AddLoanMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var addLoanWindow = new Windows.AddLoanWindow();
-            addLoanWindow.ShowDialog();
+            var addLoanWindow = new AddLoanWindow();
+            if (addLoanWindow.ShowDialog() == true)
+            {
+                // После закрытия окна обновляем данные
+                var mainWindow = Application.Current.MainWindow as MainWindow;
+              
+            }
         }
     }
 }

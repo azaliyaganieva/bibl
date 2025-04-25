@@ -23,22 +23,42 @@ namespace bibl.Pages
         public LoansPage()
         {
             InitializeComponent();
-            LoadLoans();
+            LoadActiveLoans();
         }
 
-        private void LoadLoans()
+        private void LoadActiveLoans()
         {
             try
             {
-                // Загружаем данные с учетом связей
-                var loans = DBcon.library.BookVidacha
-                    .Include(l => l.Books)
-                    .Include(l => l.Books.Departments)  // Подгружаем отдел книги
-                    .Include(l => l.Abonement)
-                    .Include(l => l.Abonement.Readers)
-                    .ToList();
+                // Проверяем подключение
+                if (!DBcon.library.Database.Exists())
+                {
+                    MessageBox.Show("Нет подключения к базе данных");
+                    return;
+                }
 
-                LoansGrid.ItemsSource = loans;
+                // Создаем 5 тестовых выдач, если их меньше 3
+                CreateTestLoansIfNeeded();
+
+                // Получаем все активные выдачи
+                var activeLoans = DBcon.library.Database.SqlQuery<LoanDisplayItem>(@"
+                    SELECT 
+                        v.ID as LoanId,
+                        b.Title as BookTitle,
+                        d.DepartmentName,
+                        r.FullName as ReaderName,
+                        v.LoanDate,
+                        v.ReturnDate
+                    FROM BookVidacha v
+                    JOIN Books b ON v.BookID = b.ID
+                    JOIN Departments d ON b.DepartmentID = d.ID
+                    JOIN Abonement a ON v.SubscriptionID = a.ID
+                    JOIN Readers r ON a.ReaderID = r.ID
+                   
+                    ORDER BY v.LoanDate DESC
+                ").ToList();
+
+                LoansGrid.ItemsSource = activeLoans;
             }
             catch (Exception ex)
             {
@@ -46,7 +66,35 @@ namespace bibl.Pages
             }
         }
 
-        // Обработчик кнопки "Вернуть"
+        private void CreateTestLoansIfNeeded()
+        {
+            // Проверяем количество активных выдач
+            var activeCount = DBcon.library.BookVidacha.Count(v => v.ReturnDate == null);
+
+            if (activeCount < 3)
+            {
+                var books = DBcon.library.Books.Take(5).ToList();
+                var readers = DBcon.library.Abonement.Take(5).ToList();
+                var employees = DBcon.library.Employees.Take(2).ToList();
+
+                if (books.Count >= 3 && readers.Count >= 3)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        var newLoan = new BookVidacha
+                        {
+                            BookID = books[i].ID,
+                            SubscriptionID = readers[i].ID,
+                            LoanDate = DateTime.Today.AddDays(-i),
+                            EmployeeID = employees[i % employees.Count].ID
+                        };
+                        DBcon.library.BookVidacha.Add(newLoan);
+                    }
+                    DBcon.library.SaveChanges();
+                }
+            }
+        }
+
         private void ReturnButton_Click(object sender, RoutedEventArgs e)
         {
             if (((Button)sender).Tag is int loanId)
@@ -54,27 +102,37 @@ namespace bibl.Pages
                 try
                 {
                     var loan = DBcon.library.BookVidacha.Find(loanId);
-                    if (loan != null)
+                    if (loan != null && loan.ReturnDate == null)
                     {
-                        // Если книга еще не возвращена
-                        if (loan.ReturnDate == null)
-                        {
-                            loan.ReturnDate = DateTime.Today;  // Ставим текущую дату
-                            DBcon.library.SaveChanges();
-                            LoadLoans();  // Обновляем таблицу
-                            MessageBox.Show("Книга возвращена!");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Эта книга уже возвращена!");
-                        }
+                        loan.ReturnDate = DateTime.Today;
+                        DBcon.library.SaveChanges();
+                        LoadActiveLoans(); // Обновляем список
+
+                        MessageBox.Show($"Книга '{loan.Books.Title}' возвращена!",
+                                      "Успех",
+                                      MessageBoxButton.OK,
+                                      MessageBoxImage.Information);
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка: {ex.Message}");
+                    MessageBox.Show($"Ошибка: {ex.Message}",
+                                  "Ошибка",
+                                  MessageBoxButton.OK,
+                                  MessageBoxImage.Error);
                 }
             }
+        }
+
+        // Класс для отображения данных
+        public class LoanDisplayItem
+        {
+            public int LoanId { get; set; }
+            public string BookTitle { get; set; }
+            public string DepartmentName { get; set; }
+            public string ReaderName { get; set; }
+            public DateTime LoanDate { get; set; }
+            public DateTime? ReturnDate { get; set; }
         }
     }
 }

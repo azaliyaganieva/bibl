@@ -62,6 +62,7 @@ namespace bibl.Windows
                 BookID = (int)BooksComboBox.SelectedValue,
                 SubscriptionID = ((Readers)ReadersComboBox.SelectedItem).ID,
                 LoanDate = IssueDatePicker.SelectedDate.Value,
+
                 ReturnDate = ReturnDatePicker.SelectedDate.Value, // Добавляем дату возврата
                 EmployeeID = 1
             };

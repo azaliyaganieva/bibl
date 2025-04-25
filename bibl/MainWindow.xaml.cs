@@ -1,4 +1,5 @@
-﻿using System;
+﻿using bibl.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,6 +26,15 @@ namespace bibl
             InitializeComponent();
             MainFrame.Navigate(new Pages.Autorizatoin());
         }
-        
+
+        public void RefreshBooksList()
+        {
+            if (MainFrame.Content is BooksPage booksPage)
+            {
+                booksPage.LoadBooks();
+            }
+        }
+
+
     }
 }

@@ -28,13 +28,39 @@ namespace bibl.Pages
             LoadDepartments();
         }
 
-        private void LoadBooks()
+        public void LoadBooks()
         {
-            BooksGrid.ItemsSource = DBcon.library.Books
-                .Include(b => b.Departments) 
-                .ToList();
+            try
+            {
+                // Используем явный SQL-запрос
+                var query = @"SELECT b.ID, b.Title, b.Author, b.PublicationYear, 
+                             d.DepartmentName, b.DepartmentID
+                      FROM Books b
+                      LEFT JOIN Departments d ON b.DepartmentID = d.ID
+                      WHERE NOT EXISTS (
+                          SELECT 1 FROM BookVidacha v 
+                          WHERE v.BookID = b.ID AND v.ReturnDate IS NULL
+                      )";
+
+                var books = DBcon.library.Database.SqlQuery<BookDisplay>(query).ToList();
+                BooksGrid.ItemsSource = books;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка: {ex.Message}");
+            }
         }
 
+        // Класс для отображения
+        public class BookDisplay
+        {
+            public int ID { get; set; }
+            public string Title { get; set; }
+            public string Author { get; set; }
+            public int? PublicationYear { get; set; }
+            public string DepartmentName { get; set; } // Будет отображаться в колонке
+            public int? DepartmentID { get; set; }
+        }
         private void LoadDepartments()
         {
             DepartmentFilter.ItemsSource = DBcon.library.Departments.ToList();

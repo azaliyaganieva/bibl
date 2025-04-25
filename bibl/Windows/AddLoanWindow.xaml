@@ -12,7 +12,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -24,8 +24,8 @@
         <ComboBox x:Name="ReadersComboBox" Grid.Row="3" Margin="0 0 0 10"
                   DisplayMemberPath="FullName" SelectedValuePath="ID"/>
 
-        <TextBlock Text="Дата выдачи:" Grid.Row="4"/>
-        <DatePicker x:Name="IssueDatePicker" Grid.Row="4" Margin="0,22,0,252"/>
+        <TextBlock Text="Дата выдачи:" Grid.Row="4" Margin="0,6,0,14" Grid.RowSpan="2"/>
+        <DatePicker x:Name="IssueDatePicker" Grid.Row="4" Margin="0,40,0,234"/>
         <TextBlock Text="Дата возврата:" Grid.Row="4" Margin="0,127,0,103"/>
         <DatePicker x:Name="ReturnDatePicker" Grid.Row="4" Margin="0,145,0,105"/>
 

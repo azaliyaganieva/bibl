@@ -9,25 +9,32 @@
       Title="LoansPage">
 
     <Grid>
-        <DataGrid x:Name="LoansGrid" Margin="10" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Книга" Binding="{Binding Books.Title}" Width="*"/>
-                <DataGridTextColumn Header="Автор" Binding="{Binding Books.Author}" Width="*"/>
-                <DataGridTextColumn Header="Читатель" Binding="{Binding Abonement.Readers.FullName}" Width="*"/>
-                <DataGridTextColumn Header="Дата выдачи" Binding="{Binding LoanDate, StringFormat=\{0:dd.MM.yyyy\}}" Width="120"/>
+        <DataGrid x:Name="LoansGrid" Margin="10" AutoGenerateColumns="False"
+                 ScrollViewer.CanContentScroll="True" 
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-                <!-- Кнопка возврата -->
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="№" Binding="{Binding LoanId}" Width="50"/>
+                <DataGridTextColumn Header="Книга" Binding="{Binding BookTitle}" Width="*"/>
+                <DataGridTextColumn Header="Отдел" Binding="{Binding DepartmentName}" Width="120"/>
+                <DataGridTextColumn Header="Читатель" Binding="{Binding ReaderName}" Width="180"/>
+                <DataGridTextColumn Header="Дата выдачи" 
+                                   Binding="{Binding LoanDate, StringFormat=dd.MM.yyyy}" 
+                                   Width="100"/>
+
                 <DataGridTemplateColumn Header="Действие" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Вернуть" 
                                     Click="ReturnButton_Click"
-                                    Tag="{Binding ID}"
-                                    Margin="2" Padding="5"/>
+                                    Tag="{Binding LoanId}"
+                                    Margin="2" Padding="5"
+                                    />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+
         </DataGrid>
     </Grid>
 </Page>

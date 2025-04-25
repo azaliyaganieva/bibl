@@ -31,7 +31,7 @@
                 <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="*"/>
                 <DataGridTextColumn Header="Автор" Binding="{Binding Author}" Width="*"/>
                 <DataGridTextColumn Header="Год" Binding="{Binding PublicationYear}" Width="100"/>
-                <DataGridTextColumn Header="Отдел" Binding="{Binding Department.DepartmentName}" Width="*"/>
+                <DataGridTextColumn Header="Отдел" Binding="{Binding DepartmentName}" Width="*"/>
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
